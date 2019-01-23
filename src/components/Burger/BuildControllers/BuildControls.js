@@ -11,13 +11,18 @@ const controls=[
 ]
 let buildControls=(props)=>(
     <div className={classes.BuildControls}>
+        <p>Current Price : <strong>{props.price.toFixed(2)}</strong></p>
         {controls.map((val)=>(
             <BuildControl
                 key={val.label}
                 label={val.label}
                 add={()=>props.addIngredients(val.type)}
+                remove={()=>props.removeIngredients(val.type)}
+                disabled={props.disabledInfo[val.type]}
+                
             />
         ))}
+        <button className={classes.OrderButton}>Order Now</button>
     </div>
 )
 export default buildControls;
