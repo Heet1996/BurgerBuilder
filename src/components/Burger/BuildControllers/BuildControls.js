@@ -15,6 +15,7 @@ let buildControls=(props)=>(
             <BuildControl
                 key={val.label}
                 label={val.label}
+                add={()=>props.addIngredients(val.type)}
             />
         ))}
     </div>
