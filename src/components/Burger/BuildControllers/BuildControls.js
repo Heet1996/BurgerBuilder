@@ -22,7 +22,10 @@ let buildControls=(props)=>(
                 
             />
         ))}
-        <button className={classes.OrderButton}>Order Now</button>
+        <button 
+        className={classes.OrderButton} 
+        disabled={!props.purchaseState}
+        onClick={props.purchaseHandler}>Order Now</button>
     </div>
 )
 export default buildControls;
