@@ -1,13 +1,11 @@
-.Logo
-{
-    height:80%;
-    background-color:white;
-    padding:8px;
+.Logo {
+    background-color: white;
+    padding: 8px;
+    height: 100%;
     box-sizing: border-box;
-    margin-top:7px;
-    border-radius:5px
+    border-radius: 5px;
 }
-.Logo img
-{
-    height:100%;
+
+.Logo img {
+    height: 100%;
 }

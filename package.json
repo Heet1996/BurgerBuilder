@@ -87,5 +87,8 @@
   },
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "devDependencies": {
+    "axios": "^0.18.0"
   }
 }
