@@ -26,7 +26,8 @@ class BurgerBuilder extends Component {
         totalPrice: 4,
         purchasable: false,
         purchasing: false,
-        loading:false
+        loading:false,
+        error:false
     }
     componentDidMount()
     {
@@ -35,7 +36,8 @@ class BurgerBuilder extends Component {
                         this.setState({
                             ingredients:res.data
                         })
-                     });   
+                     })
+                     .catch((err)=>this.setState({error:true}));   
     }
     updatePurchaseState (ingredients) {
         const sum = Object.keys( ingredients )
@@ -124,18 +126,21 @@ class BurgerBuilder extends Component {
             disabledInfo[key] = disabledInfo[key] <= 0
         }
         // {salad: true, meat: false, ...}
-        let orderSummary=<OrderSummary 
-        ingredients={this.state.ingredients}
-        price={this.state.totalPrice}
-        purchaseCancelled={this.purchaseCancelHandler}
-        purchaseContinued={this.purchaseContinueHandler} />;
+        let orderSummary;
         if(this.state.loading)
         {
             orderSummary=<Spinner/>
         }
-        let burgerStatus=<Spinner />
+        let burgerStatus=this.state.error?<p>Can't fetch the Ingredients</p>:<Spinner />;
+
         if(this.state.ingredients)
-        {   burgerStatus=<Aux>
+        {       
+            orderSummary=<OrderSummary 
+            ingredients={this.state.ingredients}
+            price={this.state.totalPrice}
+            purchaseCancelled={this.purchaseCancelHandler}
+            purchaseContinued={this.purchaseContinueHandler} />;
+            burgerStatus=<Aux>
                 <Burger ingredients={this.state.ingredients} />
                 <BuildControls
                     ingredientAdded={this.addIngredientHandler}
