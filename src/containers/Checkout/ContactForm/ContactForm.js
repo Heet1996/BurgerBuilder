@@ -16,13 +16,23 @@ class Contact extends Component
                         type: 'text',
                         placeholder: 'Your Name'
                     },
-                    value: ''
+                    value: '',
+                    validity:{
+                        required:true,
+                        valid:false,
+                        minLength:3,
+                        maxLength:15
+                    }
                 },
                 street: {
                     elementType: 'input',
                     elementConfig: {
                         type: 'text',
                         placeholder: 'Street'
+                    },
+                    validity:{
+                        required:true,
+                        valid:false
                     },
                     value: ''
                 },
@@ -32,6 +42,11 @@ class Contact extends Component
                         type: 'text',
                         placeholder: 'ZIP Code'
                     },
+                    validity:{
+                        required:true,
+                        valid:false
+
+                    },
                     value: ''
                 },
                 country: {
@@ -40,6 +55,10 @@ class Contact extends Component
                         type: 'text',
                         placeholder: 'Country'
                     },
+                    validity:{
+                        required:true,
+                        valid:false
+                    },
                     value: ''
                 },
                 email: {
@@ -47,6 +66,10 @@ class Contact extends Component
                     elementConfig: {
                         type: 'email',
                         placeholder: 'Your E-Mail'
+                    },
+                    validity:{
+                        required:true,
+                        valid:false
                     },
                     value: ''
                 },
@@ -58,6 +81,7 @@ class Contact extends Component
                             {value: 'cheapest', displayValue: 'Cheapest'}
                         ]
                     },
+                    validity:false,
                     value: ''
                 }
             },
@@ -86,6 +110,17 @@ class Contact extends Component
                     })
                     .catch((err)=>console.log(err));
     }
+    checkValidity=(values,rules)=>{
+        let isValid=true;
+        if(rules.required)
+        isValid=values.trim()!=='' && isValid;
+        if(rules.minLength)
+        isValid=values.length>=rules.minLength && isValid;
+        if(rules.maxLength)
+        isValid=values.length<=rules.maxLength && isValid
+        return isValid;
+
+    }
     inputChangedHandler = (event, inputIdentifier) => {
         const updatedOrderForm = {
             ...this.state.orderForm
@@ -95,6 +130,7 @@ class Contact extends Component
         };
         updatedFormElement.value = event.target.value;
         updatedOrderForm[inputIdentifier] = updatedFormElement;
+        updatedFormElement.validity.valid=this.checkValidity(updatedFormElement.value,updatedFormElement.validity);
         this.setState({orderForm: updatedOrderForm});
     }
     render()
@@ -114,6 +150,8 @@ class Contact extends Component
                         elementType={formElement.config.elementType}
                         elementConfig={formElement.config.elementConfig}
                         value={formElement.config.value}
+                        shouldValidate={formElement.config.validity}
+                        notValid={!formElement.config.validity.valid}
                         changed={(event) => this.inputChangedHandler(event, formElement.id)} />
                 ))}
                 <Button btnType="Success">ORDER</Button>
@@ -123,7 +161,7 @@ class Contact extends Component
             form = <Spinner />;
         }
         return (
-            <div className={classes.ContactData}>
+            <div className={classes.ContactForm}>
                 <h4>Enter your Contact Data</h4>
                 {form}
             </div>
