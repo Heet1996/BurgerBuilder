@@ -5,7 +5,8 @@ import classes from './Input.css';
 const input = ( props ) => {
     let inputElement = null;
     let inputClasses=[classes.InputElement];
-    if(props.notValid && props.shouldValidate)
+    
+    if(props.notValid && props.shouldValidate && props.touched)
     {
        inputClasses.push(classes.Invalid) 
     }
