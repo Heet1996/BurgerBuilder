@@ -8,7 +8,8 @@ import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import axiosInstance from '../../axios-order';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
-import * as actionTypes from '../../store/action';
+import * as burgerBuilderActions from '../../store/actions/index';
+
 import {connect} from 'react-redux';
 
 
@@ -167,8 +168,8 @@ const mapStateToProps=(state)=>{
  }
 const mapDispatchToProps=(dispatch)=>{
    
-   return { onIngAdded:(ingName)=>dispatch({type:actionTypes.ADDINGREDIENT,ingredientName:ingName}),
-            onIngRemoved:(ingName)=>dispatch({type:actionTypes.REMOVEINGREDIENT,ingredientName:ingName})
+   return { onIngAdded:(ingName)=>dispatch(burgerBuilderActions.addIngredients(ingName)),
+            onIngRemoved:(ingName)=>dispatch(burgerBuilderActions.removeIngredients(ingName))
     }
 }
 
