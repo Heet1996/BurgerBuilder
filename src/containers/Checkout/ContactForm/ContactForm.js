@@ -2,10 +2,12 @@ import React,{Component} from 'react';
 import Button from '../../../components/UI/Button/Button';
 import classes from '../ContactForm/ContactForm.css';
 
-import axiosInstance from '../../../axios-order';
+import * as orderActions from '../../../store/actions/index';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
 import {connect} from 'react-redux';
+import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler'
+import axios from '../../../axios-order';
 
 class Contact extends Component
 {   
@@ -96,14 +98,10 @@ class Contact extends Component
                     touched:false
                 }
             },
-        loading:false,
         isFormValid:false
     }
     orderHandler=(event)=>{
         event.preventDefault();
-        this.setState({
-            loading:'true'
-        });
         const formData = {};
         for (let formElementIdentifier in this.state.orderForm) {
             formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
@@ -113,14 +111,7 @@ class Contact extends Component
             price:this.props.totalPrice,
             orderData: formData
         }
-        axiosInstance.post('/orders.json',order)
-                    .then(res=>{
-                        this.setState({
-                            loading:false
-                        });
-                        this.props.history.push('/');
-                    })
-                    .catch((err)=>console.log(err));
+        this.props.onOrder(order);
     }
     checkValidity=(values,rules)=>{
         let isValid=true;
@@ -180,7 +171,7 @@ class Contact extends Component
                 <Button btnType="Success" disabled={!this.state.isFormValid}>ORDER</Button>
             </form>
         );
-        if ( this.state.loading ) {
+        if ( this.props.loading ) {
             form = <Spinner />;
         }
         return (
@@ -192,6 +183,13 @@ class Contact extends Component
     }
 }
 const mapStateToProps=(state)=>{
-    return {ings:state.ingredients,totalPrice:state.total}
+    return {
+        ings:state.burger.ingredients,totalPrice:state.burger.total,loading:state.order.loading
+    }
 }
-export default connect(mapStateToProps,null)(Contact);
+const mapDispatchToProps=(dispatch)=>{
+    return {
+        onOrder:(orderData)=>dispatch(orderActions.purchaseBurger(orderData))
+    }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(Contact,axios));
