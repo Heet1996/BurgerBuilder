@@ -2,7 +2,8 @@ import * as actionTypes from '../actions/actionTypes';
 
 const initialState={
     orders:[],
-    loading:false
+    loading:false,
+    purchase:false
 }
 
 const orderReducer=(state=initialState,action)=>{
@@ -11,12 +12,18 @@ const orderReducer=(state=initialState,action)=>{
         case actionTypes.PURCHASEBURGERSUCCESS:
             const newOrder={
                 ...action.orderData,
-                id:action.id
+                id:action.id,
+                purchase:true
             }
             return {
                 ...state,
                 orders:state.orders.concat(newOrder),
                 loading:false
+            }
+        case actionTypes.PURCHASEINIT:
+            return{
+                ...state,
+                purchase:false
             }
         case actionTypes.PURCHASEBURGERFAIL:return {
             ...state,

@@ -22,7 +22,12 @@ export let purchaseBurgerStart=()=>{
 
     }
 }
-
+export let purchaseInit=()=>{
+    return {
+        type:actionTypes.PURCHASEINIT,
+        
+    }
+}
 export let purchaseBurger=(orderData)=>{
     return (dispatch)=>{
         dispatch(purchaseBurgerStart())
