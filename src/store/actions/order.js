@@ -38,3 +38,37 @@ export let purchaseBurger=(orderData)=>{
         .catch((err)=>dispatch(purchaseBurgerFail(err)));
     }
 }
+
+export let fetchOrderStart=()=>{
+    return {
+        type:actionTypes.FETCHORDERSTART
+    }
+}
+export let fetchOrderFail=(err)=>{
+    return {
+        type:actionTypes.FETCHORDERFAIL,
+        err:err
+    }
+}
+export let fetchOrderSuccess=(orders)=>{
+    return {
+        type:actionTypes.FETCHORDERFAIL,
+        orders:orders
+    }
+}
+export let fetchOrder=(order)=>{
+    return (dispatch)=>{
+        axiosInstance.get('/orders.json')
+        .then(res=>{
+            
+            const fetchData=[];
+            for(let key in res.data)
+            fetchData.push({...res.data[key],key})
+            dispatch(fetchOrderSuccess(fetchData));
+            
+        }).catch((err)=>{
+            dispatch(fetchOrderFail(err));
+        })
+
+    }
+}

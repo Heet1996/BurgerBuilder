@@ -38,7 +38,8 @@ const burgerBuilderReducer=(state=initialState,action)=>{
                 return{
                     ...state,
                     ingredients:action.ingredient,
-                    error:false
+                    error:false,
+                    total:4
                 }
         case actionTypes.FETCHINGREDIENTSERROR:
                 return{

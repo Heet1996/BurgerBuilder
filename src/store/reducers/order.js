@@ -13,12 +13,13 @@ const orderReducer=(state=initialState,action)=>{
             const newOrder={
                 ...action.orderData,
                 id:action.id,
-                purchase:true
+                
             }
             return {
                 ...state,
                 orders:state.orders.concat(newOrder),
-                loading:false
+                loading:false,
+                purchase:true
             }
         case actionTypes.PURCHASEINIT:
             return{
