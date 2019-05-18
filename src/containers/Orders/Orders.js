@@ -4,33 +4,46 @@ import Order from '../../components/Order/Order';
 import axios from '../../axios-order';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import * as orderActions from '../../store/actions/index' 
+import {connect} from 'react-redux';
 
 class Orders extends Component
-{   state={
-    orders:null,
-    loading:true
-}
+{   
     componentDidMount()
     {
+       this.props.fetchOrder();
        
     }
     render()
     {
         let orderList=<Spinner/>;
-        if(!this.state.loading) 
-        orderList=this.state.orders
-        .map((order)=>(<Order 
+        
+        if(!this.props.loading) 
+        {
+        orderList=this.props.order;
+        orderList=orderList.map((order)=>(<Order 
             key={order.key} 
             orderPrice={+order.price} 
             ingredients={order.ingredients} />))
+           
+        }
         return (
             <div>
             {orderList}
             </div>
             )
+        
             
         
     }
 }
 
-export default withErrorHandler(Orders,axios);
+let mapStateToProps=(state)=>{
+    return {order:state.order.orders,loading:state.order.loading,err:state.order.err}
+}
+let mapDispacthToProps=(dispatch)=>{
+    return {
+        fetchOrder:()=>dispatch(orderActions.fetchOrder())
+    }
+}
+export default connect(mapStateToProps,mapDispacthToProps)(withErrorHandler(Orders,axios));
