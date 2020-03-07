@@ -1,6 +1,9 @@
 import * as actionTypes from './actionTypes';
 import axiosInstance from '../../axios-order';
 
+import {firebaseObj,databaseRef} from '../../config/firebaseConfig';
+
+
 
 export let purchaseBurgerSucess=(id,orderData)=>{
     return {
@@ -29,10 +32,10 @@ export let purchaseInit=()=>{
         
     }
 }
-export let purchaseBurger=(orderData)=>{
+export let purchaseBurger=(orderData,token)=>{
     return (dispatch)=>{
         dispatch(purchaseBurgerStart())
-        axiosInstance.post('/orders.json',orderData)
+        axiosInstance.post('/orders.json?auth='+token,orderData)
         .then(res=>{
             dispatch(purchaseBurgerSucess(res.data.name,orderData));
         })
@@ -57,20 +60,36 @@ export let fetchOrderSuccess=(orders)=>{
         orders:orders
     }
 }
-export let fetchOrder=()=>{
+export let fetchOrder=(token)=>{
     return (dispatch)=>{
         dispatch(fetchOrderStart());
         
-        axiosInstance.get('/orders.json')
+        // const orders=databaseRef.child(`orders/`);
+        
+        // orders.orderByChild('userId').equalTo(localStorage.getItem('userId')).once("value",(snapshot) => {
+        //     const fetchData=[];
+
+        //     for(let key in snapshot.val())
+        //     fetchData.push({...snapshot[key],key});
+        //     dispatch(fetchOrderSuccess(fetchData));
+        //   },function (errorObject) {
+        //     console.log("The read failed: " + errorObject.code);
+        //   })
+                
+        const queryParams=`?auth=${token}&orderBy="userId"&equalTo="${localStorage.getItem('userId')}"`;
+        
+        axiosInstance.get('/orders.json/'+queryParams)
         .then(res=>{
-            console.log("Success");
+            
             const fetchData=[];
+            
             for(let key in res.data)
             fetchData.push({...res.data[key],key})
             dispatch(fetchOrderSuccess(fetchData));
             
         }).catch((err)=>{
-            console.log("Not getting bro");
+            
+            console.log(err);
             dispatch(fetchOrderFail(err));
         })
 

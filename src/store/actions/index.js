@@ -2,4 +2,4 @@ export {addIngredients,removeIngredients,initIngredients,fetchIngredientsError} 
 
 export {purchaseBurgerStart,purchaseBurger,fetchOrderStart,fetchOrder} from './order';
 
-export {auth} from './auth';
+export {auth,logout,authCheckState} from './auth';

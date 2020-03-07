@@ -3,8 +3,13 @@ import {connect} from 'react-redux';
 
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
+import Spinner from '../../components/UI/Spinner/Spinner';
+
 import classes from './Auth.css';
+
 import * as actions from '../../store/actions/index';
+import { Redirect } from 'react-router';
+
 
 class Auth extends Component
 {
@@ -43,6 +48,9 @@ class Auth extends Component
         isFormValid:false,
         isSignUp:false
     }
+    
+    
+
     validateEmail(email) {
         var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(String(email).toLowerCase());
@@ -80,6 +88,9 @@ class Auth extends Component
     {
         event.preventDefault(); 
         this.props.onLogin(this.state.controllers['Email'].value,this.state.controllers['Password'].value,this.state.isSignUp);
+        //this.props.history.length>0?this.props.history.goBack():this.props.history.push('/');
+        let {from}=this.props.location.state || {from:{pathname:'/'}};
+        this.props.history.push(from);
     }
     switchAuthModedeHandler=()=>{
         this.setState(prevState=>{
@@ -109,11 +120,14 @@ class Auth extends Component
                 touched={control.config.touched}
                 label={control.id}    
             />
-        );
+            
+        
 
-        return (
-            <div className={classes.Auth}>
-                <form onSubmit={this.onAuth}>
+        );
+        
+        form=this.props.isAuth?(<Redirect to="/" />):(<React.Fragment>
+            
+            <form onSubmit={this.onAuth}>
                     {form}
                     <Button btnType="Success" disabled={!this.state.isFormValid}>Submit</Button>
                 </form>
@@ -121,14 +135,25 @@ class Auth extends Component
                     btnType="Danger"
                     clicked={this.switchAuthModedeHandler}
                     >Switch to {this.state.isSignUp ? 'LogIn' : 'SignUp'}</Button>
+        </React.Fragment>) ;
+        if(this.props.loading) form=<Spinner />
+        return (
+            <div className={classes.Auth}>
+               
+               <p> {this.props.errorMessage} </p>
+                {form}
+                
             </div>
                 )
 
     }
 
 }
+let mapStatetoProps=(state)=>{
+    return {loading:state.auth.loading,errorMessage:state.auth.error,isAuth:state.auth.token};
+}
 let mapDispatchToProps=(dispatch)=>{
     return {onLogin:(email,password,isSignUp)=>dispatch(actions.auth(email,password,isSignUp))}
 }
 
-export default connect(null,mapDispatchToProps)(Auth);
+export default connect(mapStatetoProps,mapDispatchToProps)(Auth);

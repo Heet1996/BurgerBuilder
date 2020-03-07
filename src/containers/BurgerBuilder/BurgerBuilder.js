@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {connect} from 'react-redux';
 
 import Aux from '../../hoc/Auxillary';
 import Burger from '../../components/Burger/Burger';
@@ -10,7 +11,9 @@ import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import * as action from '../../store/actions/index';
 import axiosInstance from '../../axios-order';
 import * as actionTypes from '../../store/actions/actionTypes';
-import {connect} from 'react-redux';
+
+
+
 
 
 class BurgerBuilder extends Component {
@@ -18,6 +21,7 @@ class BurgerBuilder extends Component {
     //     super(props);
     //     this.state = {...}
     // }
+    
     state = {
     
         purchasing: false
@@ -32,7 +36,7 @@ class BurgerBuilder extends Component {
         //                 })
         //              })
         //              .catch((err)=>this.setState({error:true}));   
-
+        
         this.props.initIng();
         
         
@@ -80,7 +84,9 @@ class BurgerBuilder extends Component {
     // }
 
     purchaseHandler = () => {
+        if(this.props.isAuth)
         this.setState({purchasing: true});
+        else this.props.history.push({pathname:'/auth',state:{from:'/checkout'}})
     }
 
     purchaseCancelHandler = () => {
@@ -145,7 +151,8 @@ class BurgerBuilder extends Component {
                     disabled={disabledInfo}
                     purchasable={this.updatePurchaseState()}
                     ordered={this.purchaseHandler}
-                    price={this.props.totalPrice} />
+                    price={this.props.totalPrice} 
+                    isAuth={this.props.isAuth}/>
             </Aux>
             
         }
@@ -162,7 +169,7 @@ class BurgerBuilder extends Component {
 }
 const mapStateToProps=(state)=>{
    
-    return { ing:state.burger.ingredients,totalPrice:state.burger.total,error:state.burger.error }
+    return { ing:state.burger.ingredients,totalPrice:state.burger.total,error:state.burger.error,isAuth:state.auth.token }
  }
 const mapDispatchToProps=(dispatch)=>{
    

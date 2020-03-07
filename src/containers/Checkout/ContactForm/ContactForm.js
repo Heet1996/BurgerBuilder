@@ -1,7 +1,8 @@
 import React,{Component} from 'react';
+
 import Button from '../../../components/UI/Button/Button';
 import classes from '../ContactForm/ContactForm.css';
-
+import {checkValidity} from '../../../shared/checkValidity';
 import * as orderActions from '../../../store/actions/index';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
@@ -110,38 +111,41 @@ class Contact extends Component
         const order={
             ingredients:this.props.ings,
             price:this.props.totalPrice,
-            orderData: formData
+            orderData: formData,
+            userId:this.props.userId
         }
-        this.props.onOrder(order);
-    }
-    checkValidity=(values,rules)=>{
-        let isValid=true;
-        if(rules.required)
-        isValid=values.trim()!=='' && isValid;
-        if(rules.minLength)
-        isValid=values.length>=rules.minLength && isValid;
-        if(rules.maxLength)
-        isValid=values.length<=rules.maxLength && isValid
-        return isValid ;
-
+        this.props.onOrder(order,this.props.token);
     }
     inputChangedHandler = (event, inputIdentifier) => {
+        //Destructuring and making shallow copy of orderForm state (Making copy of state) 
         const updatedOrderForm = {
             ...this.state.orderForm
         };
+        /*
+        Destructuring and making shallow copy of orderForm[inputIdentifier] state (Making copy of a state) 
+        e.g. orderForm['deliveryMethod']
+        */
         const updatedFormElement = { 
             ...updatedOrderForm[inputIdentifier]
         };
+
         updatedFormElement.value = event.target.value;
         updatedFormElement.touched=true;
-        updatedFormElement.validity.valid=this.checkValidity(updatedFormElement.value,updatedFormElement.validity);
+        /*
+         Checking required validation for orderForm[inputIdentifier]
+
+        */
+        updatedFormElement.validity.valid=checkValidity(updatedFormElement.value,updatedFormElement.validity);
 
         let isFormValid=true;
-        for(let inputElement in updatedOrderForm)
-        {
-            isFormValid=updatedOrderForm[inputElement].validity.valid && isFormValid;
-        }
+        /*
+            Validating the form with each validation
+        */
         
+        for(let inputElement in updatedOrderForm)
+            isFormValid=updatedOrderForm[inputElement].validity.valid && isFormValid;
+        
+        //Assigning new value to the updatedOrderForm    
         updatedOrderForm[inputIdentifier] = updatedFormElement;
         this.setState({orderForm: updatedOrderForm,isFormValid:isFormValid});
         
@@ -185,12 +189,16 @@ class Contact extends Component
 }
 const mapStateToProps=(state)=>{
     return {
-        ings:state.burger.ingredients,totalPrice:state.burger.total,loading:state.order.loading
+        ings:state.burger.ingredients,
+        totalPrice:state.burger.total,
+        loading:state.order.loading,
+        token:state.auth.token,
+        userId:state.auth.userId
     }
 }
 const mapDispatchToProps=(dispatch)=>{
     return {
-        onOrder:(orderData)=>dispatch(orderActions.purchaseBurger(orderData))
+        onOrder:(orderData,token)=>dispatch(orderActions.purchaseBurger(orderData,token))
     }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(Contact,axios));

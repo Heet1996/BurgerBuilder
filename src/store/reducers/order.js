@@ -4,7 +4,8 @@ const initialState={
     orders:[],
     loading:false,
     purchase:false,
-    err:null
+    err:null,
+    fetchOrder:true
 }
 
 const orderReducer=(state=initialState,action)=>{
@@ -20,7 +21,8 @@ const orderReducer=(state=initialState,action)=>{
                 ...state,
                 orders:state.orders.concat(newOrder),
                 loading:false,
-                purchase:true
+                purchase:true,
+                fetchOrder:true
             }
         case actionTypes.PURCHASEINIT:
             return{
@@ -41,11 +43,11 @@ const orderReducer=(state=initialState,action)=>{
             loading:true
         }
         case actionTypes.FETCHORDERSUCCESS:
-        
         return {
             ...state,
-            orders:state.orders.concat(action.orders),
-            loading:false
+            orders:action.orders,
+            loading:false,
+            fetchOrder:false
         }
         case actionTypes.FETCHORDERFAIL:return{
             ...state,
