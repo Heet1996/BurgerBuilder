@@ -95,7 +95,7 @@
     "extends": "react-app"
   },
   "devDependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "redux-thunk": "^2.3.0"
   }
 }
